@@ -75,7 +75,7 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
 class _Slide extends StatelessWidget {
 
   final Movie movie;
-  const _Slide({super.key, required this.movie});
+  const _Slide({required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -91,20 +91,15 @@ class _Slide extends StatelessWidget {
             width: 150,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                movie.posterPath,
-                fit: BoxFit.cover, //para que todas las imagenes tengan el mismo tamaño
-                width: 150,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if(loadingProgress != null){
-                    return Center(child: const CircularProgressIndicator(strokeWidth: 2)); //lo envolvi en un center para que se vea centrado cuando aparece el icono de carga
-                  }
-                  return GestureDetector(
-                    onTap: () => context.push('/movie/${movie.id}'), //esto me sirve para dar click y llevar a la pelicula
-                    child: FadeIn(child: child),  //agregamos un poco de animacion a la entrada con el paquete de animate_do
-                    );
-                },
-              ),
+              child: GestureDetector(
+                onTap: () => context.push('/home/0/movie/${movie.id}'),
+                child: FadeInImage(
+                  height: 220,
+                  fit: BoxFit.cover,
+                  image: NetworkImage(movie.backdropPath),
+                  placeholder: const AssetImage('assets/loaders/bottle-loader.gif'),
+                ),
+              )
             ),
           ),
 
@@ -126,7 +121,7 @@ class _Slide extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.star_half_outlined, color: Colors.yellow.shade800,), //el shade son alteraciones de ese color
-                SizedBox(width: 3,), //separar un poco
+                const SizedBox(width: 3,), //separar un poco
                 Text('${movie.voteAverage}', style: textStyles.bodyMedium?.copyWith(color: Colors.yellow.shade800),),  //para que pueda tener en color amarillo , se utiliza copywith porque me deja copiar toda la informacion de bodymedium
                 const SizedBox(width: 10,),
                 const Spacer(), //para poder agregar el spacer en un ROW debo colocar un sizedBox y ponerle un ancho fijo al row y no dejarlo INFINITO

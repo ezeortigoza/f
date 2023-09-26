@@ -1,5 +1,6 @@
 import 'package:cinemapedia/domain/datasources/movies_datasource.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/video.dart';
 import 'package:cinemapedia/domain/repositories/movie_repository.dart';
 
 class MovieRepositryImpl extends MovieRepository {   //esto se hace para que yo facilmente pueda cambiar los origenes de datos , pero cuando este con mis poviders de RIVERPOD simplemente llamo a la implementacion ya va a teener el DATASORUCE para llamar todo el mecanismo de funcionaldiad
@@ -35,6 +36,18 @@ class MovieRepositryImpl extends MovieRepository {   //esto se hace para que yo 
   @override
   Future<List<Movie>> searchMovies(String query) {
      return dataSource.searchMovies(query);
+  }
+
+  @override
+  Future<List<Movie>> getSimilarMovies(int movieId) {
+
+    return dataSource.getSimilarMovies(movieId);
+  }
+
+  @override
+  Future<List<Video>> getYoutubeVideosById(int movieId) {
+
+   return dataSource.getYoutubeVideosById(movieId);
   }
 
 }

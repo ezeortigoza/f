@@ -1,11 +1,14 @@
 //va a tener las interaciones con themovieDB
 import 'package:cinemapedia/config/constants/environment.dart';
-import 'package:cinemapedia/config/infrastructure/mappers/movie_mapper.dart';
-import 'package:cinemapedia/config/infrastructure/models/moviedb/movie_details.dart';
-import 'package:cinemapedia/config/infrastructure/models/moviedb/moviedb_response.dart';
+import 'package:cinemapedia/domain/entities/video.dart';
+import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
+import 'package:cinemapedia/infrastructure/mappers/video_mapper.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_videos.dart';
 import 'package:dio/dio.dart';
-import '../../../domain/datasources/movies_datasource.dart';
+import '../../domain/datasources/movies_datasource.dart';
 
 class MovieDbDatasource extends MovieDataSource {  //el datasource es quien va a implementar todo esto, quien me va a traer la DATA especifica
   final dio = Dio(BaseOptions(
@@ -93,6 +96,27 @@ class MovieDbDatasource extends MovieDataSource {  //el datasource es quien va a
     }
     );
     return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getSimilarMovies(int movieId) async {
+    final response = await dio.get('/movie/$movieId/similar');
+    return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Video>> getYoutubeVideosById(int movieId) async {
+    final response = await dio.get('/movie/$movieId/videos');
+    final moviedbVideoResponse = MoviedbVideosResponse.fromJson(response.data);
+    final videos = <Video>[];
+
+    for (final moviedbVideo in moviedbVideoResponse.results) {
+        if(moviedbVideo.site == 'Youtube'){
+          final video = VideoMapper.moviedbVideoToEntity(moviedbVideo);
+          videos.add(video);
+        }
+    }
+    return videos;
   }
   
 }

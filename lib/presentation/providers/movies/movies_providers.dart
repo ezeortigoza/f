@@ -51,7 +51,7 @@ class MoviesNotifier extends StateNotifier<List<Movie>>{ //que tipo de estado es
     if (isLoading) return;  //si esta en true que no haga nada mas, lo bloqueo para que no vuelva a hacer la peticion
   //si el loadin esta en false entra a este cuerpo
     isLoading = true;
-    print('Hola');
+
     currentPage++; //le sumo uno mas cada vez que cambio de pagina
     final List<Movie> movies = await fetchMoreMovies(page: currentPage); //esta linea es para tener las movies
     state = [...state, ...movies]; //regresar un nuevo estado, cuando el estado cambia notifica al STATENOTIFIER

@@ -1,137 +1,68 @@
-import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
+import 'package:cinemapedia/presentation/views/movies/home_view.dart';
+import 'package:cinemapedia/presentation/views/views.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/providers.dart';
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
 
   static const name = 'home-screen'; //es el nombre que le asigno a este componente
+  final int pageIndex;  //que opcion del TAB quiere mostrar y que vista
 
-
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: _HomeView(),
-      bottomNavigationBar: CustomBottomNavigation(),
-    );
-  }
-}
-
-class _HomeView extends ConsumerStatefulWidget {
-  const _HomeView();
+  const HomeScreen({super.key, required this.pageIndex});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeViewState extends ConsumerState<_HomeView> {
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin{
+  late PageController pageController;
+
   @override
   void initState() {
     super.initState();
-    ref.read(nowPlayingMovieProvider.notifier).loadNextPage(); //pongo READ porque estoy dentro de un metodo o funcion, este loadNextPage() va a llamar a la siguiente pagina
-    ref.read(popularMoviesProvider.notifier).loadNextPage();
-    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
-    ref.read(upComingMoviesProvider.notifier).loadNextPage();
-
+    pageController = PageController(
+      keepPage: true
+    );
   }
+  
+
+
+  final viewRoutes = const <Widget>[
+    HomeView(),
+    PopulateView(),
+    FavoritesView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
 
-    final initialLoading = ref.watch(initialLoadingProvider);
-
-    if(initialLoading) return const FullScreenLoader();  //si esta en true regreso el fullScreenLoader()
-
-    final slideShowMovies = ref.watch(moviesSlideshowProvider);
-    final nowPLayingMovies = ref.watch(nowPlayingMovieProvider); //mi listado de peliculas, las traigo
-    final popularMovies = ref.watch(popularMoviesProvider);
-    final topRatedMovies = ref.watch(topRatedMoviesProvider);
-    final upComingMovies = ref.watch(upComingMoviesProvider);
-
-
-    return CustomScrollView( //esto lo agrego para poder hacer scroll hacia abajo, cuando voy agregando mas childrens SingleChildScrollView(), agregue el CustomScrollView() esto me sirve para poder implementar el appbar y que quede como fixed cuando hago scroll hacia abajo
-      slivers: [  //esto seria como un child
-
-        const SliverAppBar( //va a ser un appBar que va a estar ahi, pero funciona como fixed 
-          floating: true, //hago scroll y subo, el appbar aparece
-          flexibleSpace: FlexibleSpaceBar( //este widget me permite añadir mi appbar creado
-            title: CustomAppBar(), //agrego mi appbar
-            centerTitle: true, //agrego el titulo al centro
-          ),
-        ), 
-        SliverList(delegate: SliverChildBuilderDelegate((context, index) {
-      return Column(
-        children: [
-    
-          //CustomAppBar(), //esto srive como el appBar, pero nos da algunas funcionalidades que appBar no la da
-    
-          MoviesSlideShow(movies: slideShowMovies),
-          
-          MovieHorizontalListview(
-            movies: nowPLayingMovies,
-            title: 'En cines',
-            subtitle: 'Lunes 20',
-            loadNextPage: () {
-              ref.read(nowPlayingMovieProvider.notifier).loadNextPage();  //el read se utiliza dentro de funciones o callbacks
-            }
-            ),
-
-            MovieHorizontalListview(
-            movies: upComingMovies,
-            title: 'Proximamente',
-            subtitle: 'En este mes',
-            loadNextPage: () {
-              ref.read(upComingMoviesProvider.notifier).loadNextPage();  //el read se utiliza dentro de funciones o callbacks
-            }
-            ),
-
-             MovieHorizontalListview(
-            movies: popularMovies,
-            title: 'Populares',
-            //subtitle: 'En este mes',
-            loadNextPage: () {
-              ref.read(popularMoviesProvider.notifier).loadNextPage();  //el read se utiliza dentro de funciones o callbacks
-            }
-            ),
-
-
-               MovieHorizontalListview(
-            movies: topRatedMovies,
-            title: 'Mejor calificadas',
-            subtitle: 'Desde siempre',
-            loadNextPage: () {
-              ref.read(topRatedMoviesProvider.notifier).loadNextPage();  //el read se utiliza dentro de funciones o callbacks
-            }
-            ),
-
-            const SizedBox(height: 30,),
-    
-    
-            
-
-      /*   Expanded(  //el expanded sirve para epandir todo lo posible es decir tiene un alto y un ancho FIJO
-          child: ListView.builder(
-             itemCount: nowPLayingMovies.length,
-             itemBuilder: (context, index) {
-             final movie = nowPLayingMovies[index];
-             return ListTile(
-             title: Text(movie.title),
-              
-            );
-          },
-          ),
-        ) */
-    
-    
-        ],
+    if(pageController.hasClients){
+      pageController.animateToPage(
+         widget.pageIndex,
+         duration: const Duration(milliseconds: 400), 
+         curve: Curves.easeInOut
       );
-       },childCount: 1) //agrego el childcount para que solo se muestre una sola vez, todo lo que agregue, sino lo muestra infinitas veces
-        )
-      ]
-    );
+    }
 
-  }
+    return  Scaffold(
+      /* body: IndexedStack(  //el indexStack mantiene el scroll, puedo ir a favoritos y me deja el scroll donde lo habia dejado anteriormente, es decir mantiene el ESTADO
+        index: widget.pageIndex, //me muestra el index que quiero mostrar
+        children: viewRoutes,  //esta es toda la lista de widget que tengo para mostrar
+      ),
+      bottomNavigationBar: CustomBottomNavigation(currentIndex: widget.pageIndex,), */
+
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(), //esto evita el rebote
+        controller: pageController,
+        children: viewRoutes,
+      ),
+       bottomNavigationBar: CustomBottomNavigation(currentIndex: widget.pageIndex,),
+    );
+}
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

@@ -1,7 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
 class MoviesSlideShow extends StatelessWidget {
@@ -40,7 +40,7 @@ class _Slide extends StatelessWidget {
 
   final Movie movie;
 
-  const _Slide({super.key, required this.movie});
+  const _Slide({ required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -62,18 +62,15 @@ class _Slide extends StatelessWidget {
         decoration: decoration,
         child: ClipRRect( //el clip es para colocar border redondeados
           borderRadius: BorderRadius.circular(20),
-          child: Image.network(
-            movie.backdropPath,  //ahi agregamos las imagenes de las peliculas
-            fit: BoxFit.cover,  //para darle el espacio que le estamos asignando
-            loadingBuilder: (context, child, loadingProgress) {
-              if ( loadingProgress != null){  //es para que muestre medio gris black antes de que carguen las imagenes
-                return const DecoratedBox(
-                  decoration: BoxDecoration(color: Colors.black12)
-                );
-              }
-              return FadeIn(child: child);  //la imagen entra con suavidad, agregando el fade in , es un paquete externo llamado animate_do
-            },
-          )
+          
+          child: GestureDetector(  //agrego el gesture para poder hacer click y que me lleve al movie.id
+            onTap: () => context.push('/home/0/movie/${movie.id}'),  //agrego url que me lleve al movie.id
+            child: FadeInImage(
+              fit: BoxFit.cover,
+              placeholder: const AssetImage('assets/loaders/bottle-loader.gif'), //traigo el gif de los assets
+              image: NetworkImage(movie.backdropPath),  //traigo la imagen
+            ),
+          ) 
           )  
         ), 
     );

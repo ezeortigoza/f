@@ -1,4 +1,5 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/video.dart';
 
 //creo una clase abstracta, porque no quiero crear instancias de ella..
 
@@ -9,5 +10,9 @@ abstract class MovieDataSource {
   Future<List<Movie>> getUpComing({int page = 1});
   Future<Movie> getMovieById(String id); //regresa una pelicula, es decir como va a lucir
   Future<List<Movie>> searchMovies(String query);
+  Future<List<Movie>> getSimilarMovies(int movieId);
+  Future<List<Video>> getYoutubeVideosById(int movieId);
+
+
 
 }

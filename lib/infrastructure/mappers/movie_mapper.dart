@@ -1,7 +1,7 @@
 //va a tener como unica mision leer diferentes modelos y crear mi entidad, es decir tomar implementacion especifica de la movidedb y transformarlo a mi entidad
 
-import 'package:cinemapedia/config/infrastructure/models/moviedb/movie_details.dart';
-import 'package:cinemapedia/config/infrastructure/models/moviedb/movie_moviedb.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_moviedb.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 
 class MovieMapper {

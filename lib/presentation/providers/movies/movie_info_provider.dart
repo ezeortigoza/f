@@ -22,7 +22,6 @@ class MovieMapNotifier extends StateNotifier<Map<String,Movie>> {  //MANTENER en
 
   Future<void> loadMovie(String movieId) async {
     if(state[movieId] != null) return;  //si tengo mi estado con ese ID con esa pelicula cargada no devuelvo nada
-    print('Realizando peticion http');
     final movie = await getMovie(movieId); //mando a llamar mi funcion
 
     state = {...state, movieId: movie}; //clono todo el estado anterior con el operador SPREAD , luego va aapuntar al movieId (si la movie existe), sino va largar una excepcion

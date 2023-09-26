@@ -1,7 +1,10 @@
+import 'package:isar/isar.dart';
+part 'movie.g.dart';  //si tiene el .G se crea el movie.G contiene muchas cosas que nos hace trabajr de una manera sencilla para la base de datos, y nos crea el esquema, es decir una representacion de lo que tenemos
 //mi primera estructura de datos de mi APP
 
-
+@collection
 class Movie {
+  Id? isarId; //incrementa por defecto el ID 1,2,3... ETC
   final bool adult;
   final String backdropPath;
   final List<String> genreIds;

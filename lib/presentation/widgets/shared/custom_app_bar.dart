@@ -45,7 +45,7 @@ class CustomAppBar extends ConsumerWidget{
                     if( movie == null ) return;  //si es null no retornamos nada
 
 
-                    context.push('/movie/${movie.id}');  //navegamos hacia la pagina dirigida de cada pelicula cuando el usuario da click
+                    context.push('/home/0/movie/${movie.id}');  //navegamos hacia la pagina dirigida de cada pelicula cuando el usuario da click
                 });
                 }, 
                 icon: Icon(Icons.search, color: colors.primary)

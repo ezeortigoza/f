@@ -33,7 +33,6 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{ //quiero devolver movi
   void _onQueryChanged(String query)  {  //Esto es para saber cuando escribe o deja de escribir el usuario
 
       isLoadingStream.add(true); //cuando escribo lo giro
-      print('query cambio');
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel(); //si esto tiene un valor puede ser nulo sino false, pero sie sta activo voy a limpiarlo
     _debounceTimer = Timer(const Duration(microseconds: 500), () async {  //Espermaos 500 miliseconds cuando deja de escribir el usuario
        /*  if (query.isEmpty){   //aqui es donde vamos a realizar la peticion HTTP
@@ -123,7 +122,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{ //quiero devolver movi
           clearStreams(), //para limpiar todo lo que teniamos en memoria
           close(context, null) //el close es propio de searchdelegate, el result es lo que yo quiero regresar cuando cierrre en este caso NULL porque no selecciono ninguna pelicula
           } ,  
-        icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.blue,),
+        icon: const Icon(Icons.arrow_back_ios_new_outlined,color: Colors.blue,),
      );
     
   }
@@ -148,7 +147,7 @@ class _MovieItem extends StatelessWidget {
   final Movie movie;
   final Function onMovieSelected;
 
-  const _MovieItem({super.key, required this.movie, required this.onMovieSelected});
+  const _MovieItem({required this.movie, required this.onMovieSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -168,13 +167,15 @@ class _MovieItem extends StatelessWidget {
                 width: size.width * 0.2, //mostramos un 20% de la pantalla, para mostrar la iamgen
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network( //muestro las peliculas
-                    movie.posterPath,
-                    loadingBuilder: (context, child, loadingProgress) => FadeIn(child: child),
-                  ), 
+                  child: FadeInImage( //le agrego animacion
+                    height: 130,
+                    image: NetworkImage(movie.posterPath),  //traigo las peliculas
+                    placeholder: const AssetImage('assets/loaders/bottle-loader.gif'),  //cuando carga muestro el GIF
+                    fit: BoxFit.cover,
+                  )
                 ),
             ),
-              SizedBox(width: 10,),
+              const SizedBox(width: 10,),
             //descripcion
             SizedBox(
               width: size.width * 0.7, //agarro el 70% de la pantalla
